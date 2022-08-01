@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SMS Management</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css">
+</head>
+<body>
+
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/" class="nav-link">Home page</a>
+      </li>
+    </ul>
+
+  </nav>
+  <!-- /.navbar -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/" class="brand-link">
+      <img src="https://storage.googleapis.com/hust-files/5807675312963584/images/hust-logo-official_.3m.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">SMS Management</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" style="height: 1000px;">
+            <li class="nav-item">
+                <a href="/trainning/list" class="nav-link">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Trainning Management</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/sms/list" class="nav-link">
+                    <i class="nav-icon fas fa-university"></i>
+                    <p>SMS Management</p>
+                </a>
+            </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+      
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>SMS Management</h1>
+          </div>
+          <div class="col-sm-5">
+            <div class="float-right">
+                <a href="/sms/add" class="btn btn-success">Add new</a>
+            </div>
+          </div>
+          <div class="col-sm-1"></div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <form class="form-horizontal" action="/sinh-vien/them-danh-sach" method="post" enctype="multipart/form-data">
+                  <!-- <div class="card card-primary">
+                    <div class="card-body">
+                        <div class="form-group row">
+                          <label for="exampleInputFile" class="col-2 col-form-label">Add List</label>
+                          <div class="input-group col-7">
+                            <div class="custom-file">
+                              <input type="file" name="file" class="custom-file-input" id="exampleInputFile">
+                              <label class="custom-file-label" for="exampleInputFile">File</label>
+                            </div>
+                            <div class="input-group-append">
+                              <button class="input-group-text" type="submit">Upload</button>
+                            </div>
+                          </div>
+                          <div class="col-1"></div>
+                          <div class="col-2">
+                            <div class="">
+                              <a href="/sinh-vien/xuat-danh-sach" class="btn btn-info">Xuất danh sách</a>
+                            </div>
+                          </div>
+                        </div>
+                    </div> -->
+                  </div>
+                </form>
+              
+              
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">SMS List</h3>
+                  <div class="card-tools">
+                    <form class="input-group input-group-sm" action="/sinh-vien" method="get" style="width: 250px;">
+                      <input type="text" name="name" th:value="${name}" class="form-control float-right" placeholder="Tên trainning">
+                      <div class="input-group-append">
+                        <button type="submit" class="btn btn-default">
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap">
+                    <thead>
+                      <tr>
+                        <th width="10%">STT</th>
+                        <th width="10%">Phone number send</th>
+                        <th width="10%">Phone number receive</th>
+                        <th width="15%">Subject</th>
+                        <th width="40%">Content</th>
+                        <th width="5%">Time receive</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for msg in messages %}
+                      <tr>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.id}}</a></td>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.phone_number_send}}</a></td>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.phone_number_receive}}</a></td>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.message_subject}}</a></td>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.message_content}}</a></td>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.message_date}}</a></td>
+                    </tr>
+                    {% endfor %}   
+                    </tbody>
+                  </table>
+                </div>
+                <nav class="center" aria-label="Page navigation example">
+                  <ul class="pagination">
+                    {% if current_page > 1 %}
+                      <li class="page-item"><a class="page-link" href="/sms/list?page={{current_page-1}}"><</a></li>
+                    {% endif %}
+                    {% for page in pages %}
+                      <li class="page-item"><a class="page-link" href="/sms/list?page={{page}}">{{page}}</a></li>
+                    {% endfor %} 
+                    {% if current_page < max_page %}
+                      <li class="page-item"><a class="page-link" href="/sms/list?page={{current_page+1}}">></a></li>
+                    {% endif %}
+                  </ul>
+                </nav>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+
+</body>
+</html>

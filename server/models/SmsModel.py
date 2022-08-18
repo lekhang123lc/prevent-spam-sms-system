@@ -1,3 +1,4 @@
+from tkinter import TRUE
 from tkinter.ttk import Separator
 from sqlalchemy import Column, Integer, Float, String, DateTime
 from sqlalchemy.orm import Session
@@ -5,6 +6,8 @@ from db import Base
 from pydantic import BaseModel
 from db import engine
 from sqlalchemy import desc
+from fastapi import UploadFile
+import pandas as pd
 
 class Message(BaseModel):
     phone_number_send: str
@@ -44,7 +47,7 @@ class SMS(Base):
 
 ####################### sms table
 def add_sms(db:Session, msg:Message, label:int=0):
-    
+    # print(msg)
     # create message instance 
     new_sms = SMS(  phone_number_send=msg.phone_number_send, 
                         phone_number_receive=msg.phone_number_receive, 
@@ -59,14 +62,17 @@ def add_sms(db:Session, msg:Message, label:int=0):
     return new_sms
 
 def update_sms(db:Session, sms:SMS):
-    is_sms_updated = db.query(SMS).filter(SMS.id == sms.id).update({
-            SMS.phone_number_send: sms.phone_number_send, SMS.phone_number_receive: sms.phone_number_receive,
-            SMS.message_subject: sms.message_subject,
-            SMS.message_content: sms.message_content,
-            SMS.message_date: sms.message_date,
-            SMS.label: sms.label
-        })
-    return is_sms_updated
+    db_sms = get_sms(db=db, id=sms.id)
+    db_sms.phone_number_send = sms.phone_number_send
+    db_sms.phone_number_receive = sms.phone_number_receive
+    db_sms.message_subject = sms.message_subject
+    db_sms.message_content = sms.message_content
+    db_sms.message_date = sms.message_date
+    db_sms.label = sms.label
+
+    db.commit()
+    db.refresh(db_sms)
+    return TRUE
 
 def get_sms(db:Session, id:int):
     message = db.query(SMS).filter(SMS.id==id).first()
@@ -76,7 +82,7 @@ def list_all_sms(db:Session):
     messages = db.query(SMS).all()
     return messages
 
-def get_max_page(db:Session, page_size=30):
+def get_max_page(db:Session, page_size=12):
     count = db.query(SMS).count()
     max_page = int(count)//page_size
     if count%page_size != 0:
@@ -87,11 +93,31 @@ def count_sms(db:Session):
     count = db.query(SMS).count()
     return count
 
-def list_sms(db:Session, page, page_size=30, start=0):
+def list_sms(db:Session, page, page_size=12, start=0):
     if start == 0:
         start = (page-1)*page_size
-    messages = db.query(SMS).limit(page_size).offset(start).all()
+    messages = db.query(SMS).order_by(SMS.id.desc()).limit(page_size).offset(start).all()
     return messages
 
 def clear_all_sms():
     return engine.connect().execute('truncate sms')
+
+def add_list(db, file: UploadFile):
+    columns = ['phone_number_send','phone_number_receive','message_status','message_subject', 'message_content', 'message_date', 'label']
+    data_xls = pd.read_excel(io=file.file.read(), names = columns)
+    n = len(data_xls['message_content'])
+    for i in range(n):
+        data_msg = Message(  phone_number_send = str(data_xls['phone_number_send'][i]), 
+                        phone_number_receive = str(data_xls['phone_number_receive'][i]), 
+                        message_status = int(data_xls['message_status'][i]), 
+                        message_subject = str(data_xls['message_subject'][i]), 
+                        message_content = str(data_xls['message_content'][i]), 
+                        message_date = str(data_xls['message_date'][i]))
+        # print(type(msg.phone_number_send))
+        add_sms(db, data_msg, int(data_xls['label'][i]))
+    # print(data_xls['message_content'][0])
+    # print(data_xls['message_content'][n-1])
+    # data_xls = pd.read_excel(file.file, index_col=None)
+    
+    # print(data_xls)
+    return ""

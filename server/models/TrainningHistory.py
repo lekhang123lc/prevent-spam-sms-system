@@ -38,12 +38,18 @@ def add_trainning(db:Session, p_spam:float, n_vocabulary:int, n_spam_sms:int, n_
 def get_last_trainning(db:Session):
     return db.query(TrainningHistory).order_by(desc(TrainningHistory.id)).limit(1).first()
 
+def get_trainning(db:Session, id:int):
+    trainning = db.query(TrainningHistory).filter(TrainningHistory.id==id).first()
+    return trainning
+
 def save_trainning(db:Session, trainning_history:TrainningHistory):
-    is_trainning_updated = db.query(TrainningHistory).filter(TrainningHistory.id == trainning_history.id).update({
-            TrainningHistory.p_spam: trainning_history.p_spam,
-            TrainningHistory.p_exactly: trainning_history.p_exactly,
-        })
-    return is_trainning_updated
+    db_trainning = get_trainning(db=db, id=trainning_history.id)
+    db_trainning.p_spam = trainning_history.p_spam
+    db_trainning.p_exactly = trainning_history.p_exactly
+    
+    db.commit()
+    db.refresh(db_trainning)
+    return TRUE
 
 def list_trainning(db:Session, page, page_size=30):
     trainnings = db.query(TrainningHistory).order_by(TrainningHistory.id.desc()).limit(page_size).offset((page-1)*page_size).all()

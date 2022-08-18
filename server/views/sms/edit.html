@@ -94,7 +94,7 @@
                                 </div>
                                 <div class="form-group">
                                   <label for="exampleInputEmail2">Content</label>
-                                  <textarea name="message_content" row="10" col="20" class="form-control" id="message_content">{{sms.message_content}}</textarea>
+                                  <textarea name="message_content" row="10" style="height:100px !important" col="20" class="form-control" id="message_content">{{sms.message_content}}</textarea>
                               </div>
                             </div>
                             <div class="col-6">
@@ -114,12 +114,28 @@
                                 <div class="col-1"><label for="exampleInputEmail7">Label</label></div>
                                 <div class="col-4">
                                     <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="label" class="custom-control-input" value="0" id="exampleInputEmail7">
+                                        {% if sms.label == 2 %}
+                                          <input type="radio" name="label" class="custom-control-input" value="2" id="customRadio1" checked>
+                                        {% else %}
+                                          <input type="radio" name="label" class="custom-control-input" value="2" id="customRadio1">
+                                        {% endif %}
                                         <label class="custom-control-label" for="customRadio1">Spam</label>
                                       </div>
                                       <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="label" class="custom-control-input" value="1" id="exampleInputEmail8">
+                                        {% if sms.label == 1 %}
+                                          <input type="radio" name="label" class="custom-control-input" value="1" id="customRadio2" checked>
+                                        {% else %}
+                                          <input type="radio" name="label" class="custom-control-input" value="1" id="customRadio2">
+                                        {% endif %}
                                         <label class="custom-control-label" for="customRadio2">Ham</label>
+                                      </div>
+                                      <div class="custom-control custom-radio custom-control-inline">
+                                        {% if sms.label == 0 %}
+                                          <input type="radio" name="label" class="custom-control-input" value="0" id="customRadio3" checked>
+                                        {% else %}
+                                          <input type="radio" name="label" class="custom-control-input" value="0" id="customRadio3">
+                                        {% endif %}
+                                        <label class="custom-control-label" for="customRadio3">Not know</label>
                                       </div>
                                 </div>
                             </div>
@@ -152,7 +168,7 @@
           "message_subject": $("input[name=message_subject]").val(),
           "message_content": $("#message_content").val(),
           "message_date": $("input[name=message_date]").val(),
-          "label": $("input[name=label]").val()
+          "label": $('input[name=label]:checked').val()
         }),
         contentType: "application/json",
         success: function (result) {

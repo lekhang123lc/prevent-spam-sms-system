@@ -27,7 +27,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <img src="https://storage.googleapis.com/hust-files/5807675312963584/images/hust-logo-official_.3m.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">SMS Management</span>
+      <span class="brand-text font-weight-light">Prevent Spam Server</span>
     </a>
 
     <!-- Sidebar -->
@@ -78,8 +78,8 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <form class="form-horizontal" action="/sinh-vien/them-danh-sach" method="post" enctype="multipart/form-data">
-                  <!-- <div class="card card-primary">
+                <form class="form-horizontal" action="/sms/add-list" method="post" enctype="multipart/form-data">
+                  <div class="card card-primary">
                     <div class="card-body">
                         <div class="form-group row">
                           <label for="exampleInputFile" class="col-2 col-form-label">Add List</label>
@@ -94,12 +94,12 @@
                           </div>
                           <div class="col-1"></div>
                           <div class="col-2">
-                            <div class="">
+                            <!-- <div class="">
                               <a href="/sinh-vien/xuat-danh-sach" class="btn btn-info">Xuất danh sách</a>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
-                    </div> -->
+                    </div>
                   </div>
                 </form>
               
@@ -108,14 +108,14 @@
                 <div class="card-header">
                   <h3 class="card-title">SMS List</h3>
                   <div class="card-tools">
-                    <form class="input-group input-group-sm" action="/sinh-vien" method="get" style="width: 250px;">
+                    <!-- <form class="input-group input-group-sm" action="/sinh-vien" method="get" style="width: 250px;">
                       <input type="text" name="name" th:value="${name}" class="form-control float-right" placeholder="Tên trainning">
                       <div class="input-group-append">
                         <button type="submit" class="btn btn-default">
                           <i class="fas fa-search"></i>
                         </button>
                       </div>
-                    </form>
+                    </form> -->
                   </div>
                 </div>
                 <!-- /.card-header -->
@@ -124,20 +124,36 @@
                     <thead>
                       <tr>
                         <th width="10%">STT</th>
-                        <th width="10%">Phone number send</th>
+                        <!-- <th width="10%">Phone number send</th>
                         <th width="10%">Phone number receive</th>
                         <th width="15%">Subject</th>
                         <th width="40%">Content</th>
-                        <th width="5%">Time receive</th>
+                        <th width="5%">Time receive</th> -->
+                        <th width="10%">Label</th>
+                        <th width="50%">Content</th>
+                        <th width="10%">Time receive</th>
                       </tr>
                     </thead>
                     <tbody>
                       {% for msg in messages %}
                       <tr>
-                        <td><a href="/sms/edit/{{msg.id}}">{{msg.id}}</a></td>
+                        <!-- <td><a href="/sms/edit/{{msg.id}}">{{msg.id}}</a></td>
                         <td><a href="/sms/edit/{{msg.id}}">{{msg.phone_number_send}}</a></td>
                         <td><a href="/sms/edit/{{msg.id}}">{{msg.phone_number_receive}}</a></td>
                         <td><a href="/sms/edit/{{msg.id}}">{{msg.message_subject}}</a></td>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.message_content}}</a></td>
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.message_date}}</a></td> -->
+                        <td><a href="/sms/edit/{{msg.id}}">{{msg.id}}</a></td>
+                        {% if msg.label == 2 %}
+                          <td><a href="/sms/edit/{{msg.id}}">Spam</a></td>
+                        {% endif %}
+                        {% if msg.label == 1 %}
+                          <td><a href="/sms/edit/{{msg.id}}">Ham</a></td>
+                        {% endif %}
+                        {% if msg.label == 0 %}
+                          <td><a href="/sms/edit/{{msg.id}}">Not know</a></td>
+                        {% endif %}
+                        
                         <td><a href="/sms/edit/{{msg.id}}">{{msg.message_content}}</a></td>
                         <td><a href="/sms/edit/{{msg.id}}">{{msg.message_date}}</a></td>
                     </tr>

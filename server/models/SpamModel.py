@@ -38,31 +38,35 @@ def is_sms_spam(db:Session, content:String):
     number_word_occurs_spam_sms = {}
     number_word_occurs_normal_sms = {}
     for word in trainning_set:
-        number_word_occurs_spam_sms.update({word: word.number_occur_in_spam_sms})
-        number_word_occurs_normal_sms.update({word: word.number_occur_in_normal_sms})
+        number_word_occurs_spam_sms.update({word.word: word.number_occur_in_spam_sms})
+        number_word_occurs_normal_sms.update({word.word: word.number_occur_in_normal_sms})
     
     p_spam_given_message   = trainning_value.p_spam
     p_ham_given_message    = 1-trainning_value.p_spam
     denominator_spam_sms   = trainning_value.n_spam_sms + trainning_value.alpha*trainning_value.n_vocabulary
     denominator_normal_sms = trainning_value.n_normal_sms + trainning_value.alpha*trainning_value.n_vocabulary
-    const = trainning_value.n_vocabulary
+    # const = trainning_value.n_vocabulary
+    const = 1
     for word in words:
-        p_spam_given_message *= const*( float(number_word_occurs_spam_sms.get(word) or 1.0) + trainning_value.alpha)/denominator_spam_sms
-        p_ham_given_message  *= const*( float(number_word_occurs_normal_sms.get(word) or 1.0) + trainning_value.alpha)/denominator_normal_sms
+        print(word, number_word_occurs_spam_sms.get(word), number_word_occurs_normal_sms.get(word))
+        p_spam_given_message *= const*( float(number_word_occurs_spam_sms.get(word) or 0) + trainning_value.alpha)/denominator_spam_sms
+        p_ham_given_message  *= const*( float(number_word_occurs_normal_sms.get(word) or 0) + trainning_value.alpha)/denominator_normal_sms
 
     print('P(Spam|message):', p_spam_given_message)
     print('P(Ham|message):', p_ham_given_message)
 
-    if p_ham_given_message > p_spam_given_message:
+    if p_ham_given_message >= p_spam_given_message:
         print('Label: Ham')
     elif p_ham_given_message < p_spam_given_message:
         print('Label: Spam')
     else:
         print('Equal proabilities, have a human classify this!')
+    
     return p_ham_given_message < p_spam_given_message
 
 def split_text_to_word(s: str):
-    separator = ['.', ',', '?', '!']
+    separator = ['.', ',', '?', '!', '/', '!', ';','+']
+    stopwords = ['ngay', 'khi']
     sentences = s.lower()
     for i in separator:
         sentences = sentences.replace(i, " ")
@@ -70,6 +74,10 @@ def split_text_to_word(s: str):
     meaning_words = []
     for word in all_words:
         if ( len(word) >= 3 ): meaning_words.append(word)
+    
+    for word in stopwords:
+        if word in meaning_words:
+            meaning_words.remove(word)
     return meaning_words
 
 def check_run():
